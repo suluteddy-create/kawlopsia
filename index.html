@@ -230,7 +230,6 @@
     position:relative; overflow:hidden;
     padding-block:clamp(4rem,12vw,8rem) clamp(3.5rem,10vw,6rem);
   }
-  .hero .wrap{ margin:0; padding-left:clamp(1.25rem, 6vw, 5rem); }
   .hero::before{
     content:""; position:absolute; inset:0; pointer-events:none; opacity:0.05; z-index:2;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -263,7 +262,7 @@
   @media (max-width:900px){ .hero-mark{ width:16rem; height:16rem; top:-3rem; right:-4rem; } }
   @media (prefers-reduced-motion: reduce){ .hero-mark{ animation:none; } }
 
-  .hero-inner{ position:relative; z-index:3; max-width:52ch; }
+  .hero-inner{ position:relative; z-index:3; max-width:clamp(30rem, 60vw, 46rem); }
   .hero h1{
     font-size:clamp(2.75rem, 6vw, 5.5rem);
     font-weight:800; line-height:1.02; letter-spacing:-0.02em;
@@ -469,13 +468,15 @@
       <path d="M32 4 58 19v26L32 60 6 45V19Z" fill="none" stroke="#D6FF3D" stroke-width="1"/>
       <path d="M32 4v26M32 30 6 19M32 30l26-11M32 30v30" stroke="#D6FF3D" stroke-width="1" fill="none"/>
     </svg>
-    <div class="wrap hero-inner" id="hero-inner">
-      <span class="eyebrow-chip">Remote Team Builder</span>
-      <h1>Built for founders who&rsquo;ve outgrown guesswork.</h1>
-      <p class="section-lede">Kawlopsia pairs founders with hand-vetted growth talent and hands-on execution — marketing, operations, and hiring run by a bench that&rsquo;s already been tested before you ever meet them.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#request-access">Request Access</a>
-        <a class="btn btn-ghost" href="#process">See How It Works</a>
+    <div class="wrap">
+      <div class="hero-inner" id="hero-inner">
+        <span class="eyebrow-chip">Remote Team Builder</span>
+        <h1>Built for founders who&rsquo;ve outgrown guesswork.</h1>
+        <p class="section-lede">Kawlopsia pairs founders with hand-vetted growth talent and hands-on execution — marketing, operations, and hiring run by a bench that&rsquo;s already been tested before you ever meet them.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#request-access">Request Access</a>
+          <a class="btn btn-ghost" href="#process">See How It Works</a>
+        </div>
       </div>
     </div>
   </section>

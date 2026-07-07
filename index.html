@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kawlopsia — Remote Team Builder</title>
+<meta name="description" content="Kawlopsia pairs founders with hand-vetted growth talent and hands-on execution — a bureau that curates every match before it happens, not an open directory.">
+<meta name="theme-color" content="#0A0A0A">
+<meta property="og:title" content="Kawlopsia — Remote Team Builder">
+<meta property="og:description" content="Built for founders who've outgrown guesswork. Apply for access.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230A0A0A'/%3E%3Cpath d='M32 14 48 23v18L32 50 16 41V23Z' fill='none' stroke='%23D6FF3D' stroke-width='2.5'/%3E%3Cpath d='M32 14v18M32 32 16 23M32 32l16-9M32 32v18' stroke='%23D6FF3D' stroke-width='2.5' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void-black:#0A0A0A;
+    --charcoal-surface:#141410;
+    --voltage-lime:#D6FF3D;
+    --lime-deep:#A8CC2E;
+    --bone-white:#F5F5F0;
+    --ash-gray:#A0A0A0;
+    --line:rgba(245,245,240,0.14);
+    --line-on-lime:rgba(10,10,10,0.18);
+
+    --font-display:"Roboto Slab", Georgia, serif;
+    --font-body:"Inter", ui-sans-serif, system-ui, sans-serif;
+
+    --space-xs:0.5rem;
+    --space-sm:1rem;
+    --space-md:2rem;
+    --space-lg:4rem;
+    --space-xl:7rem;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 160ms;
+    --dur-base: 320ms;
+
+    --glow-cta: 0 0 32px rgba(214,255,61,0.45);
+    --glow-focus: 0 0 0 3px rgba(214,255,61,0.9);
+    --glow-ambient: 0 0 28px rgba(214,255,61,0.12);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+
+  body{
+    margin:0;
+    color:var(--bone-white);
+    font-family:var(--font-body);
+    font-size:1.05rem;
+    line-height:1.65;
+    letter-spacing:0.01em;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1300px 650px at 10% -8%, rgba(214,255,61,0.09), transparent 55%),
+      radial-gradient(1000px 800px at 105% 30%, rgba(168,204,46,0.07), transparent 55%),
+      radial-gradient(1000px 900px at 50% 145%, rgba(214,255,61,0.06), transparent 60%),
+      var(--void-black);
+    background-attachment:fixed;
+  }
+
+  img,svg{ max-width:100%; display:block; }
+  a{ color:inherit; }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    color:var(--bone-white);
+    margin:0;
+    text-wrap:balance;
+  }
+
+  p{ margin:0; }
+
+  ::selection{ background:var(--voltage-lime); color:var(--void-black); }
+
+  /* ---- Focus ---- */
+  a:focus,button:focus,input:focus,textarea:focus{ outline:none; }
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:none;
+    box-shadow:var(--glow-focus);
+    border-radius:1px;
+  }
+
+  /* ---- Skip link ---- */
+  .skip-link{
+    position:absolute; left:1rem; top:-4rem;
+    background:var(--voltage-lime); color:var(--void-black);
+    padding:0.75rem 1.25rem; font-weight:700; z-index:200;
+    transition:top var(--dur-base) var(--ease-out-expo);
+  }
+  .skip-link:focus{ top:1rem; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding-inline:clamp(1.25rem, 4vw, 3rem); }
+
+  /* ---- Header / Nav ---- */
+  header.site{
+    position:sticky; top:0; z-index:100;
+    background:var(--void-black);
+    border-bottom:1px solid var(--line);
+    transition:border-color var(--dur-base) var(--ease-out-expo), box-shadow var(--dur-base) var(--ease-out-expo);
+  }
+  header.site.is-scrolled{ box-shadow:0 1px 0 var(--voltage-lime), 0 8px 30px rgba(214,255,61,0.08); }
+  .nav-row{
+    display:flex; align-items:center; gap:var(--space-md);
+    padding-block:1.1rem;
+    transition:padding-block var(--dur-base) var(--ease-out-expo);
+  }
+  header.site.is-scrolled .nav-row{ padding-block:0.8rem; }
+  .brand{
+    display:flex; align-items:center; gap:0.6rem;
+    text-decoration:none;
+    margin-right:auto;
+  }
+  .brand svg{ width:34px; height:34px; flex-shrink:0; }
+  .brand-name{
+    font-family:var(--font-body); font-weight:800; font-size:1.05rem;
+    letter-spacing:0.02em; color:var(--bone-white);
+  }
+  nav.primary-links{ display:flex; align-items:center; gap:var(--space-md); }
+  .nav-link{
+    font-weight:600; font-size:0.82rem; letter-spacing:0.03em; text-transform:uppercase;
+    text-decoration:none; color:var(--bone-white);
+    padding-bottom:4px; border-bottom:2px solid transparent;
+    transition:color var(--dur-fast) var(--ease-out-expo), border-color var(--dur-fast) var(--ease-out-expo);
+  }
+  .nav-link:hover{ color:var(--voltage-lime); border-bottom-color:var(--voltage-lime); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family:var(--font-body); font-weight:600; font-size:0.8rem;
+    letter-spacing:0.03em; text-transform:uppercase;
+    padding:1.05rem 2.2rem; border-radius:0; border:none; cursor:pointer;
+    text-decoration:none; white-space:nowrap;
+    min-height:44px; position:relative; overflow:hidden;
+    transition:background var(--dur-fast) var(--ease-out-expo), color var(--dur-fast) var(--ease-out-expo), box-shadow var(--dur-fast) var(--ease-out-expo), border-color var(--dur-fast) var(--ease-out-expo);
+  }
+  .btn-primary{ background:var(--voltage-lime); color:var(--void-black); box-shadow:0 0 20px rgba(214,255,61,0.3); }
+  .btn-primary::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(10,10,10,0.16), transparent 60%);
+    opacity:0; transition:opacity var(--dur-fast) var(--ease-out-expo);
+  }
+  .btn-primary:hover{ background:var(--lime-deep); box-shadow:var(--glow-cta); }
+  .btn-primary:hover::after{ opacity:1; }
+  .btn-primary:active{ background:var(--lime-deep); }
+
+  .btn-ghost{ background:transparent; color:var(--bone-white); border:2px solid var(--bone-white); padding:calc(1.05rem - 2px) calc(2.2rem - 2px); }
+  .btn-ghost:hover{ background:var(--void-black); color:var(--voltage-lime); border-color:var(--void-black); }
+
+  .btn-ghost-on-lime{ background:transparent; color:var(--void-black); border:2px solid var(--void-black); padding:calc(1.05rem - 2px) calc(2.2rem - 2px); }
+  .btn-ghost-on-lime:hover{ background:var(--void-black); color:var(--voltage-lime); border-color:var(--void-black); }
+
+  .nav-toggle{
+    display:none; background:none; border:none; color:var(--bone-white);
+    width:44px; height:44px; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .nav-toggle svg{ width:26px; height:26px; }
+
+  /* ---- Mobile nav overlay ---- */
+  #mobile-nav{
+    position:fixed; inset:0; z-index:150;
+    background:var(--void-black);
+    display:flex; flex-direction:column;
+    padding:1.5rem clamp(1.25rem,4vw,3rem) 2rem;
+    transform:translateY(-100%);
+    transition:transform var(--dur-base) var(--ease-out-expo);
+  }
+  #mobile-nav.is-open{ transform:translateY(0); }
+  .mobile-nav-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-lg); }
+  .mobile-nav-links{ display:flex; flex-direction:column; gap:var(--space-sm); list-style:none; padding:0; margin:0; }
+  .mobile-nav-links a{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(1.75rem,7vw,2.5rem);
+    text-decoration:none; color:var(--bone-white); padding:0.4rem 0; display:block;
+  }
+  .mobile-nav-links a:hover{ color:var(--voltage-lime); }
+  .mobile-nav-cta{ margin-top:auto; }
+
+  @media (max-width:860px){
+    nav.primary-links, header.site .btn-primary{ display:none; }
+    .nav-toggle{ display:inline-flex; }
+  }
+
+  /* ---- Sections scaffolding ---- */
+  main section{ padding-block:var(--space-xl); position:relative; }
+  .section-black{ background:transparent; }
+  .section-lime{ background:var(--voltage-lime); color:var(--void-black); }
+  .section-lime h2, .section-lime h1{ color:var(--void-black); }
+  .section-lime p{ color:rgba(10,10,10,0.78); }
+
+  .eyebrow-chip{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-size:0.78rem; font-weight:600; letter-spacing:0.02em;
+    color:var(--void-black); background:var(--voltage-lime);
+    padding:0.5rem 1rem; margin-bottom:1.75rem;
+    box-shadow:0 0 24px rgba(214,255,61,0.35);
+  }
+  .eyebrow-chip::before{ content:""; width:6px; height:6px; background:var(--void-black); border-radius:50%; }
+
+  h2.section-title{ font-size:clamp(1.9rem,3.4vw,2.75rem); line-height:1.1; letter-spacing:-0.01em; max-width:22ch; }
+  .section-lede{ font-size:1.2rem; color:var(--ash-gray); max-width:60ch; margin-top:1.1rem; line-height:1.55; }
+  .section-lime .section-lede{ color:rgba(10,10,10,0.72); }
+
+  /* ---- Reveal-on-scroll ---- */
+  [data-reveal]{
+    opacity:0; transform:translateY(22px);
+    transition:opacity 640ms var(--ease-out-expo), transform 640ms var(--ease-out-expo);
+    will-change:opacity, transform;
+  }
+  [data-reveal].is-visible{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    [data-reveal]{ opacity:1; transform:none; transition:none; }
+  }
+
+  /* ---- Media / duotone imagery ---- */
+  .media-frame{
+    position:relative; overflow:hidden; border:1px solid var(--line);
+    background:var(--charcoal-surface); width:100%; height:100%; min-width:0;
+  }
+  .media-frame img{
+    width:100%; height:100%; object-fit:cover; display:block; min-width:0;
+    filter:contrast(1.15) brightness(0.55) url(#duotone-lime);
+  }
+  .results-grid > *, .services-grid > *, .flow-step, .cta-grid > *{ min-width:0; }
+
+  /* ---- Hero ---- */
+  .hero{
+    position:relative; overflow:hidden;
+    padding-block:clamp(4rem,12vw,8rem) clamp(3.5rem,10vw,6rem);
+  }
+  .hero::before{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:0.05; z-index:2;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero-photo-bg{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+  }
+  .hero-photo-bg img{
+    width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block;
+    filter:contrast(1.15) brightness(0.55) url(#duotone-lime);
+  }
+  .hero-photo-bg::after{
+    content:""; position:absolute; inset:0;
+    background:
+      linear-gradient(90deg, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.86) 32%, rgba(10,10,10,0.45) 62%, rgba(10,10,10,0.15) 100%),
+      linear-gradient(0deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0) 30%);
+  }
+  @media (max-width:900px){
+    .hero-photo-bg::after{
+      background:
+        linear-gradient(0deg, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.8) 45%, rgba(10,10,10,0.55) 100%);
+    }
+  }
+  .hero-mark{
+    position:absolute; top:-6rem; right:-6rem; width:24rem; height:24rem; z-index:1;
+    opacity:0.5; pointer-events:none;
+    animation:spin 60s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (max-width:900px){ .hero-mark{ width:16rem; height:16rem; top:-3rem; right:-4rem; } }
+  @media (prefers-reduced-motion: reduce){ .hero-mark{ animation:none; } }
+
+  .hero-inner{ position:relative; z-index:3; max-width:52ch; }
+  .hero h1{
+    font-size:clamp(2.75rem, 6vw, 5.5rem);
+    font-weight:800; line-height:1.02; letter-spacing:-0.02em;
+  }
+  .hero .section-lede{ color:var(--ash-gray); font-size:1.25rem; max-width:48ch; }
+  .hero-actions{ display:flex; flex-wrap:wrap; gap:1rem; margin-top:var(--space-md); }
+
+  .hero-inner{ opacity:0; transform:translateY(14px); }
+  .hero-inner.is-ready{ animation:heroIn 700ms var(--ease-out-expo) forwards; }
+  @keyframes heroIn{ to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){
+    .hero-inner{ opacity:1; transform:none; animation:none; }
+  }
+
+  /* ---- Premise ---- */
+  .premise-grid{ display:grid; gap:var(--space-lg); grid-template-columns:1.1fr 1fr; align-items:start; }
+  @media (max-width:860px){ .premise-grid{ grid-template-columns:1fr; } }
+  .pullquote{
+    font-family:var(--font-display); font-weight:700; font-size:1.4rem; line-height:1.4;
+    border-top:1px solid var(--line); padding-top:1.5rem; color:var(--bone-white);
+  }
+  .pullquote cite{ display:block; margin-top:1rem; font-family:var(--font-body); font-style:normal; font-weight:600; font-size:0.8rem; color:var(--ash-gray); letter-spacing:0.02em; }
+
+  /* ---- Stat band ---- */
+  .stat-band{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-md);
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding-block:var(--space-lg); margin-top:var(--space-xl);
+  }
+  @media (max-width:760px){ .stat-band{ grid-template-columns:1fr; gap:var(--space-lg); } }
+  .stat-number{ font-family:var(--font-display); font-weight:800; font-size:clamp(2.5rem,5vw,4rem); color:var(--voltage-lime); line-height:1; text-shadow:0 0 32px rgba(214,255,61,0.4); }
+  .stat-label{ margin-top:0.75rem; font-size:0.95rem; color:var(--ash-gray); max-width:26ch; }
+  .stat-footnote{ margin-top:1.5rem; font-size:0.8rem; color:var(--ash-gray); max-width:70ch; }
+
+  /* ---- Services ---- */
+  .services-grid{ display:grid; grid-template-columns:1.3fr 0.7fr; gap:var(--space-lg); align-items:start; }
+  @media (max-width:900px){ .services-grid{ grid-template-columns:1fr; } }
+  .services-photo{ aspect-ratio:3/4; }
+  @media (max-width:900px){ .services-photo{ aspect-ratio:16/9; } }
+  .services-list{ list-style:none; margin:var(--space-md) 0 0; padding:0; border-top:1px solid var(--line); max-width:64rem; }
+  .services-list li{
+    display:flex; align-items:baseline; gap:1.25rem;
+    padding:1.35rem 0; border-bottom:1px solid var(--line);
+    font-family:var(--font-display); font-size:clamp(1.15rem,2.4vw,1.6rem); font-weight:700;
+    position:relative;
+  }
+  .services-list li span.idx{ font-family:var(--font-body); font-weight:600; font-size:0.85rem; color:var(--voltage-lime); flex-shrink:0; width:2ch; }
+  .services-list li::after{
+    content:""; position:absolute; left:0; bottom:-1px; height:2px; width:0;
+    background:var(--voltage-lime); box-shadow:0 0 12px rgba(214,255,61,0.7);
+    transition:width var(--dur-base) var(--ease-out-expo);
+  }
+  .services-list li:hover::after{ width:100%; }
+  .services-list li:hover{ color:var(--voltage-lime); }
+  .services-note{ margin-top:1.5rem; font-size:0.85rem; color:var(--ash-gray); max-width:60ch; }
+
+  /* ---- How it works ---- */
+  .flow-list{ list-style:none; margin:var(--space-lg) 0 0; padding:0; display:grid; gap:var(--space-md); grid-template-columns:repeat(3,1fr); }
+  @media (max-width:860px){ .flow-list{ grid-template-columns:1fr; } }
+  .flow-step{
+    border:1px solid var(--line); padding:var(--space-md) var(--space-sm) var(--space-sm);
+    background:rgba(20,20,16,0.5);
+    box-shadow:var(--glow-ambient);
+    transition:border-color var(--dur-base) var(--ease-out-expo), transform var(--dur-base) var(--ease-out-expo), box-shadow var(--dur-base) var(--ease-out-expo);
+  }
+  .flow-step:hover{ border-color:var(--voltage-lime); transform:translateY(-4px); box-shadow:var(--glow-cta); }
+  @media (prefers-reduced-motion: reduce){
+    .flow-step{ transition:none; }
+    .flow-step:hover{ transform:none; }
+  }
+  .flow-step .thumb{ aspect-ratio:16/10; margin-bottom:1.25rem; }
+  .flow-step .num{ font-family:var(--font-display); font-size:2.5rem; font-weight:800; color:var(--voltage-lime); line-height:1; }
+  .flow-step h3{ font-size:1.15rem; margin-top:1rem; }
+  .flow-step p{ margin-top:0.6rem; color:var(--ash-gray); font-size:0.95rem; }
+
+  /* ---- Results ---- */
+  .results-grid{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:var(--space-lg); align-items:stretch; }
+  @media (max-width:860px){ .results-grid{ grid-template-columns:1fr; } }
+  .results-photo{ aspect-ratio:4/5; }
+  @media (max-width:860px){ .results-photo{ aspect-ratio:16/9; } }
+
+  /* ---- Testimonial ---- */
+  .testimonial-card{
+    background:var(--charcoal-surface); border:1px solid var(--line);
+    padding:clamp(2rem,5vw,4rem); max-width:56rem;
+    box-shadow:var(--glow-ambient);
+    transition:border-color var(--dur-base) var(--ease-out-expo), box-shadow var(--dur-base) var(--ease-out-expo);
+  }
+  .testimonial-card:hover{ border-color:var(--voltage-lime); box-shadow:var(--glow-cta); }
+  @media (prefers-reduced-motion: reduce){ .testimonial-card{ transition:none; } }
+  .testimonial-card .mark{ font-family:var(--font-display); font-size:3rem; color:var(--voltage-lime); line-height:1; display:block; margin-bottom:0.5rem; }
+  .testimonial-card blockquote{ margin:0; font-family:var(--font-display); font-weight:700; font-size:clamp(1.3rem,2.6vw,1.8rem); line-height:1.4; }
+  .testimonial-card figcaption{ margin-top:1.5rem; font-size:0.88rem; color:var(--ash-gray); }
+  .testimonial-card figcaption b{ color:var(--bone-white); }
+
+  /* ---- CTA / form ---- */
+  .cta-grid{ display:grid; gap:var(--space-lg); grid-template-columns:1fr 1.1fr; align-items:start; }
+  @media (max-width:900px){ .cta-grid{ grid-template-columns:1fr; } }
+  .cta-visual{ margin-top:2rem; max-width:260px; aspect-ratio:3/4; border-color:var(--line-on-lime); }
+
+  form.access-form{ display:flex; flex-direction:column; gap:1.25rem; }
+  .field{ display:flex; flex-direction:column; gap:0.5rem; }
+  .field label{ font-size:0.8rem; font-weight:700; letter-spacing:0.02em; color:var(--void-black); }
+  .field input, .field textarea{
+    background:rgba(10,10,10,0.06); border:1.5px solid rgba(10,10,10,0.35);
+    color:var(--void-black); font-family:var(--font-body); font-size:1rem;
+    padding:0.9rem 1rem; border-radius:0; width:100%;
+    transition:border-color var(--dur-fast) var(--ease-out-expo), background var(--dur-fast) var(--ease-out-expo);
+  }
+  .field input::placeholder, .field textarea::placeholder{ color:rgba(10,10,10,0.45); }
+  .field input:focus, .field textarea:focus{ border-color:var(--void-black); background:rgba(10,10,10,0.1); }
+  .field textarea{ resize:vertical; min-height:110px; }
+  .field.has-error input, .field.has-error textarea{ border-color:#8f3a3a; }
+  .field-error{ font-size:0.8rem; color:#8f3a3a; font-weight:600; min-height:1.1em; }
+  .field-error:empty{ display:none; }
+
+  .form-status{
+    display:none; align-items:center; gap:0.75rem;
+    background:var(--void-black); color:var(--voltage-lime);
+    padding:1.1rem 1.25rem; font-weight:600; font-size:0.95rem;
+  }
+  .form-status.is-shown{ display:flex; }
+  .access-form.is-submitted .form-fields{ display:none; }
+
+  /* ---- Footer ---- */
+  footer{
+    border-top:1px solid var(--line); padding-block:var(--space-lg);
+    display:flex; flex-wrap:wrap; gap:var(--space-md); justify-content:space-between; align-items:flex-start;
+    position:relative;
+  }
+  .footer-brand{ display:flex; align-items:center; gap:0.6rem; }
+  .footer-brand svg{ width:28px; height:28px; }
+  footer .tagline{ color:var(--ash-gray); font-size:0.85rem; margin-top:0.4rem; }
+  footer .footer-links{ display:flex; gap:1.5rem; list-style:none; padding:0; margin:0; }
+  footer .footer-links a{ text-decoration:none; font-size:0.85rem; font-weight:600; color:var(--bone-white); }
+  footer .footer-links a:hover{ color:var(--voltage-lime); }
+  .footer-note{ width:100%; margin-top:var(--space-md); font-size:0.75rem; color:var(--ash-gray); border-top:1px solid var(--line); padding-top:1.25rem; max-width:70ch; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="duotone-lime" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="
+      0.33 0.33 0.33 0 0
+      0.33 0.33 0.33 0 0
+      0.33 0.33 0.33 0 0
+      0    0    0    1 0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.04 0.84"/>
+      <feFuncG type="table" tableValues="0.04 1"/>
+      <feFuncB type="table" tableValues="0.04 0.24"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site" id="site-header">
+  <div class="wrap nav-row">
+    <a class="brand" href="#top" aria-label="Kawlopsia, back to homepage">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="32" fill="#0A0A0A"/>
+        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="#D6FF3D" stroke-width="2.5"/>
+        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="#D6FF3D" stroke-width="2.5" fill="none"/>
+      </svg>
+      <span class="brand-name">KAWLOPSIA</span>
+    </a>
+    <nav class="primary-links" aria-label="Primary navigation">
+      <a class="nav-link" href="#services">Services</a>
+      <a class="nav-link" href="#process">Process</a>
+      <a class="nav-link" href="#results">Results</a>
+    </nav>
+    <a class="btn btn-primary" href="#request-access" id="hdr-cta">Request Access</a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div id="mobile-nav" aria-hidden="true">
+  <div class="mobile-nav-top">
+    <span class="brand-name">KAWLOPSIA</span>
+    <button class="nav-toggle" id="nav-close" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <ul class="mobile-nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#results">Results</a></li>
+  </ul>
+  <a class="btn btn-primary mobile-nav-cta" href="#request-access">Request Access</a>
+</div>
+
+<main id="main-content">
+
+  <section class="hero section-black" id="top">
+    <div class="hero-photo-bg" aria-hidden="true">
+      <img src="assets/images/hero-bali-cafe.webp" alt="">
+    </div>
+    <svg class="hero-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 4 58 19v26L32 60 6 45V19Z" fill="none" stroke="#D6FF3D" stroke-width="1"/>
+      <path d="M32 4v26M32 30 6 19M32 30l26-11M32 30v30" stroke="#D6FF3D" stroke-width="1" fill="none"/>
+    </svg>
+    <div class="wrap hero-inner" id="hero-inner">
+      <span class="eyebrow-chip">Remote Team Builder</span>
+      <h1>Built for founders who&rsquo;ve outgrown guesswork.</h1>
+      <p class="section-lede">Kawlopsia pairs founders with hand-vetted growth talent and hands-on execution — marketing, operations, and hiring run by a bench that&rsquo;s already been tested before you ever meet them.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#request-access">Request Access</a>
+        <a class="btn btn-ghost" href="#process">See How It Works</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-black" aria-labelledby="premise-title">
+    <div class="wrap">
+      <div class="premise-grid reveal-group">
+        <div>
+          <h2 class="section-title" id="premise-title">Hiring fast and hiring right are rarely the same thing.</h2>
+          <p class="section-lede">Every open role, every new campaign, every extra hand is a fresh gamble when you&rsquo;re building alone — a r&eacute;sum&eacute; you can&rsquo;t verify, a strategy built on guesswork, a hire who needs three months to become useful. Kawlopsia removes the gamble. Every match on our bench has already earned its place before your first call.</p>
+        </div>
+        <blockquote class="pullquote">
+          &ldquo;We don&rsquo;t fill your roster. We protect your shortlist.&rdquo;
+          <cite>— Kawlopsia&rsquo;s Operating Principle</cite>
+        </blockquote>
+      </div>
+
+      <div class="stat-band reveal-group">
+        <div>
+          <div class="stat-number" data-target="10" data-suffix=" days">10 days</div>
+          <p class="stat-label">Median time to a vetted match</p>
+        </div>
+        <div>
+          <div class="stat-number" data-target="70" data-suffix="%">70%</div>
+          <p class="stat-label">Lower cost than an equivalent local hire, up to</p>
+        </div>
+        <div>
+          <div class="stat-number" data-target="100" data-suffix="%">100%</div>
+          <p class="stat-label">Of applicants reviewed before a call is booked</p>
+        </div>
+      </div>
+      <p class="stat-footnote">Figures reflect our target service benchmarks — to be replaced with verified numbers once the first cohort of client data is in.</p>
+    </div>
+  </section>
+
+  <section class="section-black" id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="section-head reveal-group">
+        <h2 class="section-title" id="services-title">Where we actually show up</h2>
+        <p class="section-lede">Six specialties on the bench — not a package menu, talent you get to draw from as the need shows up.</p>
+      </div>
+      <div class="services-grid reveal-group">
+        <div>
+          <ol class="services-list reveal-group">
+            <li><span class="idx">01</span>Design</li>
+            <li><span class="idx">02</span>Virtual Assistant (VA)</li>
+            <li><span class="idx">03</span>Sales &amp; Marketing</li>
+            <li><span class="idx">04</span>Market Research</li>
+            <li><span class="idx">05</span>AI for Marketing &amp; Sales</li>
+            <li><span class="idx">06</span>Content &amp; UGC Production</li>
+          </ol>
+          <p class="services-note">Draft scope of work — to be reviewed and refined before this page goes live.</p>
+        </div>
+        <div class="media-frame services-photo">
+          <img src="assets/images/services-resume.png" alt="">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-black" id="process" aria-labelledby="process-title">
+    <div class="wrap">
+      <div class="section-head reveal-group">
+        <h2 class="section-title" id="process-title">How access actually works</h2>
+        <p class="section-lede">No one gets a seat the moment they submit a form. These three steps are what make &ldquo;curated&rdquo; true, not just a word in the headline.</p>
+      </div>
+      <ol class="flow-list reveal-group">
+        <li class="flow-step">
+          <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt=""></div>
+          <span class="num">01</span><h3>Apply for Access</h3><p>Tell us your growth or hiring gap, team size, and timezone in a short form.</p>
+        </li>
+        <li class="flow-step">
+          <div class="media-frame thumb"><img src="assets/images/process-reviewed-panel.png" alt=""></div>
+          <span class="num">02</span><h3>Reviewed, Not Rushed</h3><p>We check for fit before we ever check the calendar.</p>
+        </li>
+        <li class="flow-step">
+          <div class="media-frame thumb"><img src="assets/images/process-matched-videocall.webp" alt=""></div>
+          <span class="num">03</span><h3>Matched &amp; Onboarded</h3><p>Approved founders get paired with vetted talent and a working plan inside the first week.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-black" id="results" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="section-head reveal-group">
+        <h2 class="section-title" id="results-title">Proof over promises</h2>
+        <p class="section-lede" style="margin-bottom:2.5rem;">This is where a real client result belongs — a name, a number, a quote we can stand behind.</p>
+      </div>
+      <div class="results-grid reveal-group">
+        <div class="media-frame results-photo">
+          <img src="assets/images/results-panel-office.png" alt="">
+        </div>
+        <figure class="testimonial-card">
+          <span class="mark" aria-hidden="true">&ldquo;</span>
+          <blockquote>Client result to be added here once the first verified case study is confirmed with the customer.</blockquote>
+          <figcaption><b>Placeholder</b> — do not publish without a confirmed client quote and sign-off.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-lime" id="request-access" aria-labelledby="request-title">
+    <div class="wrap cta-grid reveal-group">
+      <div>
+        <h2 class="section-title" id="request-title">Ready to stop gambling on growth?</h2>
+        <p class="section-lede">Apply for access below. Our team reviews every request personally — no automatic yes, no mass onboarding.</p>
+        <div class="media-frame cta-visual" data-reveal>
+          <img src="assets/images/cta-founder-coffee.png" alt="">
+        </div>
+      </div>
+      <form class="access-form" id="access-form" novalidate>
+        <div class="form-fields">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input type="text" id="f-name" name="name" autocomplete="name" required aria-describedby="err-name">
+            <span class="field-error" id="err-name" role="alert"></span>
+          </div>
+          <div class="field">
+            <label for="f-email">Work Email</label>
+            <input type="email" id="f-email" name="email" autocomplete="email" required aria-describedby="err-email">
+            <span class="field-error" id="err-email" role="alert"></span>
+          </div>
+          <div class="field">
+            <label for="f-company">Company</label>
+            <input type="text" id="f-company" name="company" autocomplete="organization" required aria-describedby="err-company">
+            <span class="field-error" id="err-company" role="alert"></span>
+          </div>
+          <div class="field">
+            <label for="f-industry">Industry</label>
+            <input type="text" id="f-industry" name="industry" autocomplete="off" required aria-describedby="err-industry">
+            <span class="field-error" id="err-industry" role="alert"></span>
+          </div>
+          <div class="field">
+            <label for="f-message">Tell us what you need</label>
+            <textarea id="f-message" name="message" required aria-describedby="err-message"></textarea>
+            <span class="field-error" id="err-message" role="alert"></span>
+          </div>
+          <button type="submit" class="btn btn-ghost-on-lime" style="align-self:flex-start;">Submit Request</button>
+        </div>
+        <div class="form-status" id="form-status" role="status">
+          <span aria-hidden="true">&#10003;</span>
+          <span>Thank you — our team will review your request and get back to you within 48 hours.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="section-black">
+  <div class="wrap" style="display:flex; flex-wrap:wrap; gap:var(--space-md); justify-content:space-between; align-items:flex-start;">
+    <div class="footer-brand">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="32" fill="#0A0A0A"/>
+        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="#D6FF3D" stroke-width="2.5"/>
+        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="#D6FF3D" stroke-width="2.5" fill="none"/>
+      </svg>
+      <div>
+        <span class="brand-name">KAWLOPSIA</span>
+        <p class="tagline">Remote Team Builder</p>
+      </div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="https://instagram.com/kawlopsia" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="#request-access">Request Access</a></li>
+    </ul>
+    <p class="footer-note">&copy; 2026 Kawlopsia. Site draft — copy, figures, and testimonial are placeholders pending final review before launch.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Hero entrance
+  var hero = document.getElementById("hero-inner");
+  if (hero) requestAnimationFrame(function(){ hero.classList.add("is-ready"); });
+
+  // Sticky header state on scroll
+  var header = document.getElementById("site-header");
+  function onScroll(){
+    if (window.scrollY > 8) header.classList.add("is-scrolled");
+    else header.classList.remove("is-scrolled");
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Magnetic glow on primary buttons (hover-only, matches the earned-glow rule)
+  document.querySelectorAll(".btn-primary").forEach(function(btn){
+    btn.addEventListener("mousemove", function(e){
+      var rect = btn.getBoundingClientRect();
+      btn.style.setProperty("--mx", ((e.clientX - rect.left) / rect.width * 100) + "%");
+      btn.style.setProperty("--my", ((e.clientY - rect.top) / rect.height * 100) + "%");
+    });
+  });
+
+  // Mobile nav
+  var toggle = document.getElementById("nav-toggle");
+  var closeBtn = document.getElementById("nav-close");
+  var mobileNav = document.getElementById("mobile-nav");
+  function openNav(){
+    mobileNav.classList.add("is-open");
+    mobileNav.removeAttribute("aria-hidden");
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+    var firstLink = mobileNav.querySelector("a");
+    if (firstLink) firstLink.focus();
+  }
+  function closeNav(){
+    mobileNav.classList.remove("is-open");
+    mobileNav.setAttribute("aria-hidden", "true");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+    toggle.focus();
+  }
+  if (toggle) toggle.addEventListener("click", openNav);
+  if (closeBtn) closeBtn.addEventListener("click", closeNav);
+  if (mobileNav) mobileNav.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closeNav();
+  });
+  mobileNav.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeNav); });
+
+  // Scroll-reveal: auto-stagger direct children of .reveal-group, tag standalone [data-reveal] as-is
+  document.querySelectorAll(".reveal-group").forEach(function(group){
+    Array.prototype.forEach.call(group.children, function(child, i){
+      child.setAttribute("data-reveal", "");
+      child.style.transitionDelay = reduceMotion ? "0ms" : (i * 90) + "ms";
+    });
+  });
+
+  function animateCount(el){
+    if (reduceMotion) return;
+    var target = parseFloat(el.dataset.target);
+    var suffix = el.dataset.suffix || "";
+    if (isNaN(target)) return;
+    var start = null;
+    var duration = 1200;
+    function step(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  var revealEls = document.querySelectorAll("[data-reveal]");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+          var counter = entry.target.querySelector(".stat-number");
+          if (counter) animateCount(counter);
+        }
+      });
+    }, { threshold: 0.2 });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add("is-visible"); });
+  }
+
+  // Access form: client-side validation + simulated submit (no backend yet)
+  var form = document.getElementById("access-form");
+  var status = document.getElementById("form-status");
+  var validators = {
+    name: function(v){ return v.trim().length > 1 ? "" : "Name is required."; },
+    email: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Enter a valid email address."; },
+    company: function(v){ return v.trim().length > 1 ? "" : "Company name is required."; },
+    industry: function(v){ return v.trim().length > 1 ? "" : "Industry is required."; },
+    message: function(v){ return v.trim().length > 5 ? "" : "Tell us a bit about what you need."; }
+  };
+
+  function validateField(input){
+    var name = input.name;
+    var fn = validators[name];
+    if (!fn) return true;
+    var msg = fn(input.value);
+    var field = input.closest(".field");
+    var errId = "err-" + name;
+    var errorEl = document.getElementById(errId);
+    if (msg) {
+      field.classList.add("has-error");
+      if (errorEl) errorEl.textContent = msg;
+    } else {
+      field.classList.remove("has-error");
+      if (errorEl) errorEl.textContent = "";
+    }
+    return !msg;
+  }
+
+  if (form) {
+    form.querySelectorAll("input, textarea").forEach(function(input){
+      input.addEventListener("blur", function(){ validateField(input); });
+    });
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var inputs = form.querySelectorAll("input, textarea");
+      var allValid = true;
+      inputs.forEach(function(input){
+        if (!validateField(input)) allValid = false;
+      });
+      if (!allValid) {
+        var firstError = form.querySelector(".has-error input, .has-error textarea");
+        if (firstError) firstError.focus();
+        return;
+      }
+      form.classList.add("is-submitted");
+      status.classList.add("is-shown");
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

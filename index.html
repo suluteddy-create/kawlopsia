@@ -321,7 +321,14 @@
   .services-note{ margin-top:1.5rem; font-size:0.85rem; color:var(--ash-gray); max-width:60ch; }
 
   /* ---- How it works ---- */
-  .flow-list{ list-style:none; margin:var(--space-lg) 0 0; padding:0; display:grid; gap:var(--space-md); grid-template-columns:repeat(3,1fr); }
+  .flow-progress{ position:relative; height:3px; background:var(--line); margin:var(--space-lg) 0 0; overflow:hidden; }
+  .flow-progress-fill{
+    position:absolute; inset:0 auto 0 0; width:0%;
+    background:var(--voltage-lime); box-shadow:0 0 12px rgba(214,255,61,0.6);
+    transition:width 480ms var(--ease-out-expo);
+  }
+  @media (prefers-reduced-motion: reduce){ .flow-progress-fill{ transition:none; } }
+  .flow-list{ list-style:none; margin:var(--space-md) 0 0; padding:0; display:grid; gap:var(--space-md); grid-template-columns:repeat(3,1fr); }
   @media (max-width:860px){ .flow-list{ grid-template-columns:1fr; } }
   .flow-step{
     border:1px solid var(--line); padding:var(--space-md) var(--space-sm) var(--space-sm);
@@ -350,7 +357,7 @@
     background:var(--charcoal-surface); border:1px solid var(--line);
     padding:clamp(2rem,5vw,4rem); max-width:56rem;
     box-shadow:var(--glow-ambient);
-    transition:border-color var(--dur-base) var(--ease-out-expo), box-shadow var(--dur-base) var(--ease-out-expo);
+    transition:border-color var(--dur-base) var(--ease-out-expo), box-shadow var(--dur-base) var(--ease-out-expo), transform var(--dur-base) var(--ease-out-expo);
   }
   .testimonial-card:hover{ border-color:var(--voltage-lime); box-shadow:var(--glow-cta); }
   @media (prefers-reduced-motion: reduce){ .testimonial-card{ transition:none; } }
@@ -473,7 +480,7 @@
     <div class="wrap">
       <div class="hero-inner" id="hero-inner">
         <span class="eyebrow-chip">Remote Team Builder</span>
-        <h1>Built for founders who&rsquo;ve outgrown guesswork.</h1>
+        <h1>Built for founders who&rsquo;ve outgrown <span class="decode-target" data-decode="guesswork.">guesswork.</span></h1>
         <p class="section-lede">Kawlopsia pairs founders with hand-vetted growth talent and hands-on execution — marketing, operations, and hiring run by a bench that&rsquo;s already been tested before you ever meet them.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#request-access">Request Access</a>
@@ -545,6 +552,7 @@
         <h2 class="section-title" id="process-title">How access actually works</h2>
         <p class="section-lede">No one gets a seat the moment they submit a form. These three steps are what make &ldquo;curated&rdquo; true, not just a word in the headline.</p>
       </div>
+      <div class="flow-progress" aria-hidden="true"><span class="flow-progress-fill" id="flow-progress-fill"></span></div>
       <ol class="flow-list reveal-group">
         <li class="flow-step">
           <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt=""></div>
@@ -654,10 +662,57 @@
 (function(){
   "use strict";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canHover = window.matchMedia("(hover: hover)").matches;
 
   // Hero entrance
   var hero = document.getElementById("hero-inner");
   if (hero) requestAnimationFrame(function(){ hero.classList.add("is-ready"); });
+
+  // Text-decode: scrambles then resolves into the real word, once, on hero entrance
+  function decodeText(el){
+    var finalText = el.dataset.decode || el.textContent;
+    var glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%&*+=?";
+    var duration = 650;
+    var start = null;
+    function frame(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var revealCount = Math.floor(p * finalText.length);
+      var out = "";
+      for (var i = 0; i < finalText.length; i++){
+        if (i < revealCount || finalText[i] === " ") out += finalText[i];
+        else out += glyphs[Math.floor(Math.random() * glyphs.length)];
+      }
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = finalText;
+    }
+    requestAnimationFrame(frame);
+  }
+  var decodeTargets = document.querySelectorAll(".decode-target");
+  if (decodeTargets.length && !reduceMotion) {
+    setTimeout(function(){
+      decodeTargets.forEach(function(el){ decodeText(el); });
+    }, 320);
+  }
+
+  // Tilt: subtle pointer-following 3D tilt on process and testimonial cards
+  function attachTilt(el){
+    el.addEventListener("mousemove", function(e){
+      var rect = el.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width - 0.5;
+      var py = (e.clientY - rect.top) / rect.height - 0.5;
+      var rx = (-py * 6).toFixed(2);
+      var ry = (px * 6).toFixed(2);
+      el.style.transform = "perspective(900px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) translateY(-4px)";
+    });
+    el.addEventListener("mouseleave", function(){
+      el.style.transform = "";
+    });
+  }
+  if (canHover && !reduceMotion) {
+    document.querySelectorAll(".flow-step, .testimonial-card").forEach(attachTilt);
+  }
 
   // Sticky header state on scroll
   var header = document.getElementById("site-header");
@@ -729,6 +784,19 @@
     requestAnimationFrame(step);
   }
 
+  // Process progress rail: fills a step at a time as each flow-step is revealed
+  var flowSteps = Array.prototype.slice.call(document.querySelectorAll(".flow-step"));
+  var flowFill = document.getElementById("flow-progress-fill");
+  var flowMaxIndex = 0;
+  function updateFlowProgress(step){
+    if (!flowFill) return;
+    var idx = flowSteps.indexOf(step) + 1;
+    if (idx > flowMaxIndex) {
+      flowMaxIndex = idx;
+      flowFill.style.width = (flowMaxIndex / flowSteps.length * 100) + "%";
+    }
+  }
+
   var revealEls = document.querySelectorAll("[data-reveal]");
   if ("IntersectionObserver" in window && !reduceMotion) {
     var io = new IntersectionObserver(function(entries){
@@ -738,12 +806,14 @@
           io.unobserve(entry.target);
           var counter = entry.target.querySelector(".stat-number");
           if (counter) animateCount(counter);
+          if (entry.target.classList.contains("flow-step")) updateFlowProgress(entry.target);
         }
       });
     }, { threshold: 0.2 });
     revealEls.forEach(function(el){ io.observe(el); });
   } else {
     revealEls.forEach(function(el){ el.classList.add("is-visible"); });
+    if (flowFill && flowSteps.length) flowFill.style.width = "100%";
   }
 
   // Access form: client-side validation + simulated submit (no backend yet)

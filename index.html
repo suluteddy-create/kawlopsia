@@ -55,12 +55,17 @@
     line-height:1.65;
     letter-spacing:0.01em;
     -webkit-font-smoothing:antialiased;
+    background:var(--void-black);
+    position:relative;
+  }
+  /* Ambient glow as a fixed compositor layer, not background-attachment:fixed —
+     avoids the full-background repaint that property forces on scroll in older mobile engines. */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
     background:
       radial-gradient(1300px 650px at 10% -8%, rgba(214,255,61,0.09), transparent 55%),
       radial-gradient(1000px 800px at 105% 30%, rgba(168,204,46,0.07), transparent 55%),
-      radial-gradient(1000px 900px at 50% 145%, rgba(214,255,61,0.06), transparent 60%),
-      var(--void-black);
-    background-attachment:fixed;
+      radial-gradient(1000px 900px at 50% 145%, rgba(214,255,61,0.06), transparent 60%);
   }
 
   img,svg{ max-width:100%; display:block; }
@@ -73,7 +78,7 @@
     text-wrap:balance;
   }
 
-  p{ margin:0; }
+  p{ margin:0; text-wrap:pretty; }
 
   ::selection{ background:var(--voltage-lime); color:var(--void-black); }
 
@@ -388,12 +393,10 @@
   @media (max-width:900px){ .services-photo{ aspect-ratio:16/9; } }
   .services-list{ list-style:none; margin:var(--space-md) 0 0; padding:0; border-top:1px solid var(--line); max-width:64rem; }
   .services-list li{
-    display:flex; align-items:baseline; gap:1.25rem;
     padding:1.35rem 0; border-bottom:1px solid var(--line);
     font-family:var(--font-display); font-size:clamp(1.15rem,2.4vw,1.6rem); font-weight:700;
     position:relative;
   }
-  .services-list li span.idx{ font-family:var(--font-body); font-weight:600; font-size:0.85rem; color:var(--voltage-lime); flex-shrink:0; width:2ch; }
   .services-list li::after{
     content:""; position:absolute; left:0; bottom:-1px; height:2px; width:0;
     background:var(--voltage-lime); box-shadow:0 0 12px rgba(214,255,61,0.7);
@@ -406,9 +409,10 @@
   /* ---- How it works ---- */
   .flow-progress{ position:relative; height:3px; background:var(--line); margin:var(--space-lg) 0 0; overflow:hidden; }
   .flow-progress-fill{
-    position:absolute; inset:0 auto 0 0; width:0%;
+    position:absolute; inset:0; width:100%;
     background:var(--voltage-lime); box-shadow:0 0 12px rgba(214,255,61,0.6);
-    transition:width 480ms var(--ease-out-expo);
+    transform-origin:left; transform:scaleX(0);
+    transition:transform 480ms var(--ease-out-expo);
   }
   @media (prefers-reduced-motion: reduce){ .flow-progress-fill{ transition:none; } }
   .flow-list{ list-style:none; margin:var(--space-md) 0 0; padding:0; display:grid; gap:var(--space-md); grid-template-columns:repeat(3,1fr); }
@@ -518,9 +522,9 @@
   <div class="wrap nav-row">
     <a class="brand" href="#top" aria-label="Kawlopsia, back to homepage">
       <svg viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="32" r="32" fill="#0A0A0A"/>
-        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="#D6FF3D" stroke-width="2.5"/>
-        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="#D6FF3D" stroke-width="2.5" fill="none"/>
+        <circle cx="32" cy="32" r="32" fill="var(--void-black)"/>
+        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="var(--voltage-lime)" stroke-width="2.5"/>
+        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="var(--voltage-lime)" stroke-width="2.5" fill="none"/>
       </svg>
       <span class="brand-name">KAWLOPSIA</span>
     </a>
@@ -555,11 +559,11 @@
 
   <section class="hero section-black" id="top">
     <div class="hero-photo-bg" aria-hidden="true">
-      <img src="assets/images/hero-bali-cafe.webp" alt="">
+      <img src="assets/images/hero-bali-cafe.webp" alt="" fetchpriority="high">
     </div>
     <svg class="hero-mark" viewBox="0 0 64 64" aria-hidden="true">
-      <path d="M32 4 58 19v26L32 60 6 45V19Z" fill="none" stroke="#D6FF3D" stroke-width="1"/>
-      <path d="M32 4v26M32 30 6 19M32 30l26-11M32 30v30" stroke="#D6FF3D" stroke-width="1" fill="none"/>
+      <path d="M32 4 58 19v26L32 60 6 45V19Z" fill="none" stroke="var(--voltage-lime)" stroke-width="1"/>
+      <path d="M32 4v26M32 30 6 19M32 30l26-11M32 30v30" stroke="var(--voltage-lime)" stroke-width="1" fill="none"/>
     </svg>
     <div class="wrap">
       <div class="hero-inner" id="hero-inner">
@@ -614,17 +618,17 @@
       <div class="services-grid reveal-group">
         <div>
           <ol class="services-list reveal-group">
-            <li><span class="idx">01</span>Design</li>
-            <li><span class="idx">02</span>Virtual Assistant (VA)</li>
-            <li><span class="idx">03</span>Sales &amp; Marketing</li>
-            <li><span class="idx">04</span>Market Research</li>
-            <li><span class="idx">05</span>AI for Marketing &amp; Sales</li>
-            <li><span class="idx">06</span>Content &amp; UGC Production</li>
+            <li>Design</li>
+            <li>Virtual Assistant (VA)</li>
+            <li>Sales &amp; Marketing</li>
+            <li>Market Research</li>
+            <li>AI for Marketing &amp; Sales</li>
+            <li>Content &amp; UGC Production</li>
           </ol>
           <p class="services-note">Draft scope of work — to be reviewed and refined before this page goes live.</p>
         </div>
         <div class="media-frame services-photo">
-          <img src="assets/images/services-resume.png" alt="">
+          <img src="assets/images/services-resume.png" alt="" loading="lazy">
         </div>
       </div>
     </div>
@@ -639,15 +643,15 @@
       <div class="flow-progress" aria-hidden="true"><span class="flow-progress-fill" id="flow-progress-fill"></span></div>
       <ol class="flow-list reveal-group">
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt="Founder on a video call from a home desk, notes open beside the laptop"></div>
+          <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt="Founder on a video call from a home desk, notes open beside the laptop" loading="lazy"></div>
           <span class="num">01</span><h3>Apply for Access</h3><p>Tell us your growth or hiring gap, team size, and timezone in a short form.</p>
         </li>
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-reviewed-panel.png" alt="A small panel interviewing a candidate together in an office"></div>
+          <div class="media-frame thumb"><img src="assets/images/process-reviewed-panel.png" alt="A small panel interviewing a candidate together in an office" loading="lazy"></div>
           <span class="num">02</span><h3>Meet Your Shortlist</h3><p>Browse a short, curated list — first name, skillset, experience. No open directory. You choose who to interview.</p>
         </li>
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-matched-videocall.webp" alt="Talent working late at a laptop, lamp lit in a home workspace"></div>
+          <div class="media-frame thumb"><img src="assets/images/process-matched-videocall.webp" alt="Talent working late at a laptop, lamp lit in a home workspace" loading="lazy"></div>
           <span class="num">03</span><h3>Start, Fee Protected</h3><p>Work begins once you both agree after the interview. Your fee stays in escrow until the project is confirmed done.</p>
         </li>
       </ol>
@@ -662,12 +666,12 @@
       </div>
       <div class="protection-icon" aria-hidden="true">
         <svg viewBox="0 0 120 120" fill="none">
-          <circle cx="60" cy="68" r="40" stroke="#D6FF3D" stroke-width="1.2" opacity="0.4"/>
-          <text x="60" y="80" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="34" fill="#D6FF3D" opacity="0.5">$</text>
-          <path d="M40 58 V40 a20 20 0 0 1 40 0 V58" stroke="#D6FF3D" stroke-width="2"/>
-          <rect x="30" y="58" width="60" height="46" fill="#0A0A0A" stroke="#D6FF3D" stroke-width="2"/>
-          <circle cx="60" cy="76" r="5" stroke="#D6FF3D" stroke-width="2"/>
-          <line x1="60" y1="81" x2="60" y2="90" stroke="#D6FF3D" stroke-width="2"/>
+          <circle cx="60" cy="68" r="40" stroke="var(--voltage-lime)" stroke-width="1.2" opacity="0.4"/>
+          <text x="60" y="80" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="34" fill="var(--voltage-lime)" opacity="0.5">$</text>
+          <path d="M40 58 V40 a20 20 0 0 1 40 0 V58" stroke="var(--voltage-lime)" stroke-width="2"/>
+          <rect x="30" y="58" width="60" height="46" fill="var(--void-black)" stroke="var(--voltage-lime)" stroke-width="2"/>
+          <circle cx="60" cy="76" r="5" stroke="var(--voltage-lime)" stroke-width="2"/>
+          <line x1="60" y1="81" x2="60" y2="90" stroke="var(--voltage-lime)" stroke-width="2"/>
         </svg>
       </div>
     </div>
@@ -681,7 +685,7 @@
       </div>
       <div class="results-grid reveal-group">
         <div class="media-frame results-photo">
-          <img src="assets/images/results-panel-office.png" alt="">
+          <img src="assets/images/results-panel-office.png" alt="" loading="lazy">
         </div>
         <figure class="testimonial-card">
           <span class="mark" aria-hidden="true">&ldquo;</span>
@@ -698,7 +702,7 @@
         <h2 class="section-title" id="request-title">Ready to stop gambling on growth?</h2>
         <p class="section-lede">Apply for access below. Our team reviews every request personally — no automatic yes, no mass onboarding.</p>
         <div class="media-frame cta-visual" data-reveal>
-          <img src="assets/images/cta-founder-coffee.png" alt="">
+          <img src="assets/images/cta-founder-coffee.png" alt="" loading="lazy">
         </div>
       </div>
       <form class="access-form" id="access-form" novalidate>
@@ -744,9 +748,9 @@
   <div class="wrap" style="display:flex; flex-wrap:wrap; gap:var(--space-md); justify-content:space-between; align-items:flex-start;">
     <div class="footer-brand">
       <svg viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="32" r="32" fill="#0A0A0A"/>
-        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="#D6FF3D" stroke-width="2.5"/>
-        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="#D6FF3D" stroke-width="2.5" fill="none"/>
+        <circle cx="32" cy="32" r="32" fill="var(--void-black)"/>
+        <path d="M32 14 48 23v18L32 50 16 41V23Z" fill="none" stroke="var(--voltage-lime)" stroke-width="2.5"/>
+        <path d="M32 14v18M32 32 16 23M32 32l16-9M32 32v18" stroke="var(--voltage-lime)" stroke-width="2.5" fill="none"/>
       </svg>
       <div>
         <span class="brand-name">KAWLOPSIA</span>
@@ -922,7 +926,7 @@
     var idx = flowSteps.indexOf(step) + 1;
     if (idx > flowMaxIndex) {
       flowMaxIndex = idx;
-      flowFill.style.width = (flowMaxIndex / flowSteps.length * 100) + "%";
+      flowFill.style.transform = "scaleX(" + (flowMaxIndex / flowSteps.length) + ")";
     }
   }
 
@@ -945,7 +949,7 @@
     revealEls.forEach(function(el){ io.observe(el); });
   } else {
     revealEls.forEach(function(el){ el.classList.add("is-visible"); });
-    if (flowFill && flowSteps.length) flowFill.style.width = "100%";
+    if (flowFill && flowSteps.length) flowFill.style.transform = "scaleX(1)";
   }
 
   // Access form: client-side validation + simulated submit (no backend yet)

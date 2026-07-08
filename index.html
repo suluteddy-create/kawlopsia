@@ -281,6 +281,16 @@
   /* ---- Premise ---- */
   .premise-grid{ display:grid; gap:var(--space-lg); grid-template-columns:1.1fr 1fr; align-items:start; }
   @media (max-width:860px){ .premise-grid{ grid-template-columns:1fr; } }
+
+  /* ---- Protection ---- */
+  .protection-grid{ display:grid; gap:var(--space-lg); grid-template-columns:1.1fr 1fr; align-items:center; }
+  @media (max-width:860px){ .protection-grid{ grid-template-columns:1fr; } }
+  .protection-icon{
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line); background:var(--charcoal-surface);
+    aspect-ratio:1; max-width:260px; margin-inline:auto; padding:3rem;
+  }
+  .protection-icon svg{ width:100%; height:100%; }
   .pullquote{
     font-family:var(--font-display); font-weight:700; font-size:1.4rem; line-height:1.4;
     border-top:1px solid var(--line); padding-top:1.5rem; color:var(--bone-white);
@@ -555,15 +565,15 @@
       <div class="flow-progress" aria-hidden="true"><span class="flow-progress-fill" id="flow-progress-fill"></span></div>
       <ol class="flow-list reveal-group">
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt=""></div>
+          <div class="media-frame thumb"><img src="assets/images/process-apply-videocall.webp" alt="Founder on a video call from a home desk, notes open beside the laptop"></div>
           <span class="num">01</span><h3>Apply for Access</h3><p>Tell us your growth or hiring gap, team size, and timezone in a short form.</p>
         </li>
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-reviewed-panel.png" alt=""></div>
+          <div class="media-frame thumb"><img src="assets/images/process-reviewed-panel.png" alt="A small panel interviewing a candidate together in an office"></div>
           <span class="num">02</span><h3>Meet Your Shortlist</h3><p>Browse a short, curated list — first name, skillset, experience. No open directory. You choose who to interview.</p>
         </li>
         <li class="flow-step">
-          <div class="media-frame thumb"><img src="assets/images/process-matched-videocall.webp" alt=""></div>
+          <div class="media-frame thumb"><img src="assets/images/process-matched-videocall.webp" alt="Talent working late at a laptop, lamp lit in a home workspace"></div>
           <span class="num">03</span><h3>Start, Fee Protected</h3><p>Work begins once you both agree after the interview. Your fee stays in escrow until the project is confirmed done.</p>
         </li>
       </ol>
@@ -571,10 +581,20 @@
   </section>
 
   <section class="section-black" id="protection" aria-labelledby="protection-title">
-    <div class="wrap">
-      <div class="section-head reveal-group" style="max-width:52rem;">
+    <div class="wrap protection-grid reveal-group">
+      <div>
         <h2 class="section-title" id="protection-title">Your fee stays protected until the work is done.</h2>
         <p class="section-lede">You don&rsquo;t pay talent directly. Your fee sits in a Kawlopsia-held wallet the moment you approve a match, and we only release it once you confirm the project is complete. If it doesn&rsquo;t work out, you&rsquo;re covered — not stuck.</p>
+      </div>
+      <div class="protection-icon" aria-hidden="true">
+        <svg viewBox="0 0 120 120" fill="none">
+          <circle cx="60" cy="68" r="40" stroke="#D6FF3D" stroke-width="1.2" opacity="0.4"/>
+          <text x="60" y="80" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="34" fill="#D6FF3D" opacity="0.5">$</text>
+          <path d="M40 58 V40 a20 20 0 0 1 40 0 V58" stroke="#D6FF3D" stroke-width="2"/>
+          <rect x="30" y="58" width="60" height="46" fill="#0A0A0A" stroke="#D6FF3D" stroke-width="2"/>
+          <circle cx="60" cy="76" r="5" stroke="#D6FF3D" stroke-width="2"/>
+          <line x1="60" y1="81" x2="60" y2="90" stroke="#D6FF3D" stroke-width="2"/>
+        </svg>
       </div>
     </div>
   </section>
@@ -745,11 +765,35 @@
   var toggle = document.getElementById("nav-toggle");
   var closeBtn = document.getElementById("nav-close");
   var mobileNav = document.getElementById("mobile-nav");
+  var inertTargets = [document.getElementById("site-header"), document.getElementById("main-content"), document.querySelector("footer")].filter(Boolean);
+
+  function focusableIn(container){
+    return Array.prototype.slice.call(
+      container.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+    ).filter(function(el){ return el.offsetParent !== null; });
+  }
+
+  function trapTab(e){
+    if (e.key !== "Tab") return;
+    var focusable = focusableIn(mobileNav);
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   function openNav(){
     mobileNav.classList.add("is-open");
     mobileNav.removeAttribute("aria-hidden");
     toggle.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
+    inertTargets.forEach(function(el){ el.setAttribute("inert", ""); });
     var firstLink = mobileNav.querySelector("a");
     if (firstLink) firstLink.focus();
   }
@@ -758,12 +802,14 @@
     mobileNav.setAttribute("aria-hidden", "true");
     toggle.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
+    inertTargets.forEach(function(el){ el.removeAttribute("inert"); });
     toggle.focus();
   }
   if (toggle) toggle.addEventListener("click", openNav);
   if (closeBtn) closeBtn.addEventListener("click", closeNav);
   if (mobileNav) mobileNav.addEventListener("keydown", function(e){
     if (e.key === "Escape") closeNav();
+    else trapTab(e);
   });
   mobileNav.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeNav); });
 

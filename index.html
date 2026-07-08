@@ -21,6 +21,7 @@
     --lime-deep:#A8CC2E;
     --bone-white:#F5F5F0;
     --ash-gray:#A0A0A0;
+    --error-red:#8F3A3A;
     --line:rgba(245,245,240,0.14);
     --line-on-lime:rgba(10,10,10,0.18);
 
@@ -190,6 +191,8 @@
   .section-lime{ background:var(--voltage-lime); color:var(--void-black); }
   .section-lime h2, .section-lime h1{ color:var(--void-black); }
   .section-lime p{ color:rgba(10,10,10,0.78); }
+  /* The Three-Room Rule's deliberate middle room — use sparingly, see DESIGN.md */
+  .section-charcoal{ background:var(--charcoal-surface); }
 
   .eyebrow-chip{
     display:inline-flex; align-items:center; gap:0.5rem;
@@ -464,8 +467,8 @@
   .field input::placeholder, .field textarea::placeholder{ color:rgba(10,10,10,0.45); }
   .field input:focus, .field textarea:focus{ border-color:var(--void-black); background:rgba(10,10,10,0.1); }
   .field textarea{ resize:vertical; min-height:110px; }
-  .field.has-error input, .field.has-error textarea{ border-color:#8f3a3a; }
-  .field-error{ font-size:0.8rem; color:#8f3a3a; font-weight:600; min-height:1.1em; }
+  .field.has-error input, .field.has-error textarea{ border-color:var(--error-red); }
+  .field-error{ font-size:0.8rem; color:var(--error-red); font-weight:600; min-height:1.1em; }
   .field-error:empty{ display:none; }
 
   .form-status{
@@ -651,7 +654,7 @@
     </div>
   </section>
 
-  <section class="section-black" id="protection" aria-labelledby="protection-title">
+  <section class="section-charcoal" id="protection" aria-labelledby="protection-title">
     <div class="wrap protection-grid reveal-group">
       <div>
         <h2 class="section-title" id="protection-title">Your fee stays protected until the work is done.</h2>

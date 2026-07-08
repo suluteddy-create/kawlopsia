@@ -10,6 +10,7 @@ colors:
   lime-deep: "#A8CC2E"
   bone-white: "#F5F5F0"
   ash-gray: "#A0A0A0"
+  error-red: "#8F3A3A"
   line: "rgba(245,245,240,0.14)"
 typography:
   display:
@@ -75,10 +76,12 @@ Kawlopsia's surface reads like a door with a list behind it: void-black rooms cu
 The system explicitly rejects the generic SaaS/AI grammar named in PRODUCT.md — no gradient text, no hero-metric-card clichés, no uniform icon grids, no tiny tracked eyebrow sitting above every section out of habit. It also rejects the open-marketplace feel: no dense grids of interchangeable "browse" cards that would read as Upwork/Fiverr. Density stays low and deliberate; every block of lime is a decision, not decoration.
 
 **Key Characteristics:**
-- Two dominant surfaces only — void-black and voltage-lime — used as full panels, not gradients or tints between them.
+- Three surfaces — void-black, voltage-lime, and charcoal-surface as a deliberate "third room" — used as full panels, not gradients or tints between them.
 - Heavy slab-serif display type set tight and large, functioning like poster headlines, not app copy.
-- Flat, hard-edged geometry at rest; glow is reserved as a live, earned response to interaction.
+- Flat, hard-edged geometry at rest, with ambient glow permitted at rest only on elevated cards that need to signal weight; interactive elements still earn their glow through hover/focus.
 - Restraint in ornament: no card borders-as-decoration, no side-stripes, no soft shadows.
+
+**Revision note (2026-07-08):** the three rules below were loosened after real build experience showed the original all-or-nothing versions were already being quietly worked around in shipped code. Each change is scoped narrowly — the core "bold, tegas, two rooms" identity is untouched; see [Do's and Don'ts](#6-dos-and-donts) for what still holds firm.
 
 ## 2. Colors
 
@@ -89,13 +92,14 @@ Two saturated surfaces carry the identity; everything else is in service of legi
 
 ### Neutral
 - **Void Black** (#0A0A0A): The default body surface — most of the page lives here. Reads as the "waiting room" before access.
-- **Charcoal Surface** (#141410): One step up from Void Black, used only for a card/panel that needs to sit slightly forward on a black section (e.g. a testimonial block) without introducing a second hue.
+- **Charcoal Surface** (#141410): One step up from Void Black. Originally card-only; now also a valid full-section background (see The Three-Room Rule) for a moment that needs to read as distinct from the surrounding waiting-room black without earning a full lime "you're in" panel — e.g. a trust/security beat like fee protection. Still never used as a card background on a lime section, and never blended with either brand color.
 - **Bone White** (#F5F5F0): Primary text and headline color on black surfaces. Never pure #FFFFFF — keeps the page from feeling clinical.
 - **Ash Gray** (#A0A0A0): Secondary/muted text (captions, metadata, timestamps) on black surfaces only — 7.6:1 against Void Black, never used at body-copy size on Voltage Lime.
 - **Lime Deep** (#A8CC2E): Hover/active state for lime surfaces — a shade down in lightness, never a different hue, so state changes read as "pressed," not "recolored."
+- **Error Red** (#8F3A3A): Utility color, scoped strictly to form-validation and inline-notification states (field borders, error text). Never used for section backgrounds, decoration, or anything outside error/warning feedback — this is a functional exception to the two brand hues, not a third brand color.
 
 ### Named Rules
-**The Two-Room Rule.** A given section is either a black room or a lime room — never a gradient between them, never a lime tint applied to a black background "for accent." If a section needs a third value, use Charcoal Surface, not a blend of the two brand colors.
+**The Three-Room Rule** *(formerly the Two-Room Rule)*. A given section is void-black, voltage-lime, or charcoal-surface at full strength — never a gradient between any of them, never a tint applied "for accent." Charcoal-surface is the deliberate middle room: reach for it when a section needs more weight than the waiting-room black but hasn't earned the lime "you're in" moment yet. It should stay rare — if more than one section in a row uses it, the specialness is gone and it's becoming a fourth default, not a considered exception.
 
 ## 3. Typography
 
@@ -115,14 +119,17 @@ Two saturated surfaces carry the identity; everything else is in service of legi
 
 ## 4. Elevation
 
-Flat by default — surfaces are solid color blocks with no ambient shadow, matching the poster-like flatness of the source material. Depth is introduced only as a *response to interaction*: primary CTAs and key interactive elements carry a lime glow on hover/focus, never at rest. This keeps the resting page graphic and print-like while giving the one interaction that matters (booking a call, requesting access) a distinct, earned lift.
+Flat by default — surfaces are solid color blocks with no ambient shadow, matching the poster-like flatness of the source material. Two distinct kinds of depth exist, and they mean different things:
+- **Earned glow** — a *response to interaction*. Primary CTAs and key interactive elements carry a lime glow on hover/focus only. This is the one that matters most: the interaction that drives the page's single conversion path gets a distinct, earned lift.
+- **Ambient glow** — a *resting-state signal of weight*, permitted on a small, named set of elevated cards (see below) that need to read as important the moment they appear, not just on interaction.
 
 ### Shadow Vocabulary
-- **glow-cta** (`box-shadow: 0 0 32px rgba(214,255,61,0.45)`): Hover/focus state on the primary CTA button and any lime-surfaced link. Signals "this is the way through."
+- **glow-cta** (`box-shadow: 0 0 32px rgba(214,255,61,0.45)`): Hover/focus state on the primary CTA button and any lime-surfaced link. Signals "this is the way through." Interaction-only, no exceptions.
 - **glow-focus** (`box-shadow: 0 0 0 2px rgba(214,255,61,0.9)`): Keyboard focus ring on all interactive elements — a lime ring, not a browser-default blue.
+- **glow-ambient** (`box-shadow: 0 0 28px rgba(214,255,61,0.12)`): Permitted at rest on elevated content cards — process/flow cards, testimonial/quote cards — where the card needs to feel present against a black section without waiting for a hover. Not for buttons, inputs, or anything already covered by glow-cta/glow-focus.
 
 ### Named Rules
-**The Earned-Glow Rule.** Glow only appears on `:hover` / `:focus-visible`, never at rest. A page with everything glowing has nothing glowing.
+**The Earned-Glow Rule, revised.** `glow-cta` and `glow-focus` still only appear on `:hover` / `:focus-visible` — that discipline is what makes the CTA's glow mean something. `glow-ambient` is the one named, deliberate exception: it may sit at rest on elevated cards, and should intensify to `glow-cta` on hover/focus for that "earned" lift on top of the ambient base. If a component isn't on the short list above, it stays flat until interaction — the rule still exists to be broken rarely, not ignored.
 
 ## 5. Components
 
@@ -141,7 +148,7 @@ Flat by default — surfaces are solid color blocks with no ambient shadow, matc
 ### Inputs / Fields
 - **Style:** Void Black or Charcoal Surface background, 1px `line` border, Bone White text, 0px radius.
 - **Focus:** Border color shifts to Voltage Lime, `glow-focus` ring appears.
-- **Error:** Border and label shift to a desaturated red-orange (not yet tokenized — resolve alongside form-validation build).
+- **Error:** Border and label shift to Error Red (#8F3A3A) — tokenized, scoped to form/notification states only (see Colors).
 
 ### Navigation
 - Void Black bar, Bone White wordmark/logo, Label-style nav links (uppercase, 600 weight). Active/hover link underlines in Voltage Lime — a 2px solid underline, not a border-left stripe. Mobile: full-black overlay menu, links set in Headline size for thumb-friendly tap targets.
@@ -149,14 +156,16 @@ Flat by default — surfaces are solid color blocks with no ambient shadow, matc
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** keep every section either Void Black or Voltage Lime at full strength — no in-between tints (The Two-Room Rule).
+- **Do** keep every section Void Black, Voltage Lime, or Charcoal Surface at full strength — no in-between tints, no blending (The Three-Room Rule). Charcoal-surface sections stay rare and deliberate.
 - **Do** cut every corner square (0px radius) on buttons, cards, and inputs — the flat, print-poster geometry is the point.
-- **Do** reserve the lime glow (`glow-cta`) for hover/focus states only, never at rest.
+- **Do** reserve `glow-cta` and `glow-focus` for hover/focus states only — `glow-ambient` is the sole named at-rest exception, and only on the elevated-card short list (see Elevation).
 - **Do** frame every CTA as an application/request action ("Ajukan Akses", "Jadwalkan Panggilan"), never a generic "Sign Up" or "Get Started."
+- **Do** keep Error Red scoped to form/notification states only — it is a functional utility color, not a third brand hue.
 
 ### Don't:
-- **Don't** use gradient text or a gradient background anywhere — the brand is two flat colors, not a blend.
+- **Don't** use gradient text or a gradient background anywhere — the brand is flat color blocks, not a blend.
 - **Don't** add a tiny uppercase tracked eyebrow above every section out of habit (The No-Eyebrow Rule) — label type only labels real interactive elements.
 - **Don't** use numbered 01/02/03 section markers unless the content is a genuine ordered sequence (the login/onboarding flows qualify; generic marketing sections do not).
 - **Don't** build dense, uniform card grids that read like an open talent directory — the page should feel curated and sparse, not like a marketplace listing.
 - **Don't** use `border-left`/`border-right` colored stripes as an accent on any card, alert, or list item.
+- **Don't** reach for charcoal-surface as a default "safe middle ground" — it exists for the rare section that needs more weight than black but hasn't earned lime, not as a way to avoid committing to a room.

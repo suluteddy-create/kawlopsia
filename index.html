@@ -204,15 +204,85 @@
   .section-lede{ font-size:1.2rem; color:var(--ash-gray); max-width:60ch; margin-top:1.1rem; line-height:1.55; }
   .section-lime .section-lede{ color:rgba(10,10,10,0.72); }
 
-  /* ---- Reveal-on-scroll ---- */
+  /* ---- Reveal on scroll: base — text blocks and section heads rise ---- */
   [data-reveal]{
     opacity:0; transform:translateY(22px);
     transition:opacity 640ms var(--ease-out-expo), transform 640ms var(--ease-out-expo);
     will-change:opacity, transform;
   }
   [data-reveal].is-visible{ opacity:1; transform:translateY(0); }
+  [data-reveal].reveal-done{ will-change:auto; }
+
+  /* Ledger-stamp wipe: pullquote + testimonial — a curtain retreats right, revealing left-to-right.
+     Uses a ::before overlay rather than clipping the observed element itself: clip-path on the
+     element IntersectionObserver is watching zeroes its measured intersection ratio in Chromium,
+     so the reveal would never fire. transform on a pseudo-element sidesteps that entirely. */
+  .pullquote[data-reveal], .testimonial-card[data-reveal]{
+    opacity:1; transform:none; position:relative;
+  }
+  .pullquote[data-reveal]::before, .testimonial-card[data-reveal]::before{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    transform-origin:right; transform:scaleX(1);
+    transition:transform 620ms var(--ease-out-expo);
+  }
+  .pullquote[data-reveal]::before{ background:var(--void-black); }
+  .testimonial-card[data-reveal]::before{ background:var(--charcoal-surface); }
+  .pullquote[data-reveal].is-visible::before, .testimonial-card[data-reveal].is-visible::before{ transform:scaleX(0); }
+
+  /* List sweep: Services rows draw in like their own hover underline (::before — ::after is the underline) */
+  .services-list li[data-reveal]{ opacity:1; transform:none; }
+  .services-list li[data-reveal]::before{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:var(--void-black);
+    transform-origin:right; transform:scaleX(1);
+    transition:transform 460ms var(--ease-out-expo);
+  }
+  .services-list li[data-reveal].is-visible::before{ transform:scaleX(0); }
+
+  /* Photo curtain: media frames rise out of void-black, bottom to top */
+  .media-frame[data-reveal]{ opacity:1; transform:none; }
+  .media-frame[data-reveal]::after{
+    content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:var(--charcoal-surface);
+    transform-origin:top; transform:scaleY(1);
+    transition:transform 680ms var(--ease-out-expo);
+  }
+  .media-frame[data-reveal].is-visible::after{ transform:scaleY(0); }
+
+  /* Flow-step: card itself just appears; thumb curtains open, caption follows a beat later */
+  .flow-step[data-reveal]{ opacity:1; transform:none; }
+  .flow-step .thumb{ clip-path:inset(0 0 100% 0); transition:clip-path 680ms var(--ease-out-expo); }
+  .flow-step.is-visible .thumb{ clip-path:inset(0 0 0% 0); }
+  .flow-step .num, .flow-step h3, .flow-step p{
+    opacity:0; transform:translateY(10px);
+    transition:opacity 420ms var(--ease-out-expo) 240ms, transform 420ms var(--ease-out-expo) 240ms;
+  }
+  .flow-step.is-visible .num, .flow-step.is-visible h3, .flow-step.is-visible p{ opacity:1; transform:translateY(0); }
+
+  /* Stat band: fade only — no competing movement while the number counts up */
+  .stat-band > div[data-reveal]{ transform:none; }
+
+  /* Protection icon: locks into place, decisive not bouncy */
+  .protection-icon[data-reveal]{
+    transform:scale(0.75) rotate(-8deg);
+    transition:opacity 480ms var(--ease-out-expo), transform 480ms var(--ease-out-expo);
+  }
+  .protection-icon[data-reveal].is-visible{ transform:scale(1) rotate(0deg); }
+
+  /* CTA form: the form settles, its fields cascade in one beat behind */
+  .access-form[data-reveal]{ transform:none; }
+  .field[data-reveal], .form-fields > .btn[data-reveal]{
+    transform:translateY(14px);
+    transition:opacity 380ms var(--ease-out-expo), transform 380ms var(--ease-out-expo);
+  }
+  .field[data-reveal].is-visible, .form-fields > .btn[data-reveal].is-visible{ transform:translateY(0); }
+
   @media (prefers-reduced-motion: reduce){
-    [data-reveal]{ opacity:1; transform:none; transition:none; }
+    [data-reveal]{ opacity:1 !important; transform:none !important; transition:none !important; }
+    [data-reveal]::before, [data-reveal]::after{ display:none !important; }
+    .flow-step .thumb, .flow-step .num, .flow-step h3, .flow-step p{
+      opacity:1 !important; transform:none !important; clip-path:none !important; transition:none !important;
+    }
   }
 
   /* ---- Media / duotone imagery ---- */
@@ -439,6 +509,7 @@
 </svg>
 
 <a class="skip-link" href="#main-content">Skip to main content</a>
+<noscript><style>[data-reveal]{ opacity:1 !important; transform:none !important; clip-path:none !important; }</style></noscript>
 
 <header class="site" id="site-header">
   <div class="wrap nav-row">
@@ -628,7 +699,7 @@
         </div>
       </div>
       <form class="access-form" id="access-form" novalidate>
-        <div class="form-fields">
+        <div class="form-fields reveal-group">
           <div class="field">
             <label for="f-name">Name</label>
             <input type="text" id="f-name" name="name" autocomplete="name" required aria-describedby="err-name">
@@ -859,6 +930,9 @@
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
           io.unobserve(entry.target);
+          entry.target.addEventListener("transitionend", function(){
+            entry.target.classList.add("reveal-done");
+          }, { once: true });
           var counter = entry.target.querySelector(".stat-number");
           if (counter) animateCount(counter);
           if (entry.target.classList.contains("flow-step")) updateFlowProgress(entry.target);
